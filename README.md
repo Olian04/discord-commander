@@ -9,8 +9,9 @@ import { HelpCommand, help } from 'discordjs-commander/commands/help';
 class EchoCommand extends Command('echo') {
   @option('c') private capitalize = false;
   @option() private debug = false;
-  @help private helpText = 
-    'echo [option] <phrase to echo>' +
+  @help() private helpText = 
+    'echo [options] phraseToEcho' +
+    'Echos the given phrase back to the user.' +
     '  --capitalize -c | Capitalizes the echoed text. (default: false)' +
     '  --debug         | Enables debug logging. (default: false)';
   
@@ -40,10 +41,13 @@ client.login(discord_secret);
 
 ```
 !help
-Syntax: !commandName [options] <argument>
-  echo [options] <argument>
+Syntax: !commandName [options] <optionalArgument> requiredArgument
+  echo [options] phraseToEcho
+    Echos the given phrase back to the user.
     --capitalize -c | Capitalizes the echoed text. (default: false)
     --debug         | Enables debug logging. (default: false)
+  help
+    Shows this page.
 ```
 
 ## Install
