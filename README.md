@@ -4,6 +4,7 @@ A command manager for discord.js bots.
 ```ts
 import { Client } from 'discord.js' 
 import { Commander, Command } from 'discordjs-commander';
+import { HelpCommand } from 'discordjs-commander/commands';
 
 class EchoCommand extends Command('echo') {
   @option('c') private capitalize = false;
@@ -24,6 +25,7 @@ class EchoCommand extends Command('echo') {
 
 const commander = new Commander([
   EchoCommand,
+  HelpCommand,
 ]);
 
 const client = new Client();
