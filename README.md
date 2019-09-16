@@ -24,7 +24,7 @@ class EchoCommand extends Command('echo') {
       author,
       channel,
       message,
-      event: { type: 'new' | 'edit' }
+      event: { type: 'new' | 'edit', args }
     } = cmd;
   }
 }
@@ -39,7 +39,7 @@ commander.start(client);
 client.login(discord_secret);
 ```
 
-```
+```txt
 !help
 Syntax: !commandName [options] <optionalArgument> requiredArgument
   echo [options] phraseToEcho
