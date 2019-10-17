@@ -29,7 +29,7 @@ client.login(discord_secret);
 
 ## Install
 
-1. Install library: [`npm i discord-commander`](#).
+1. Install library: [`npm i discord-commander`](https://www.npmjs.com/package/discord-commander).
 2. Enable `experimentalDecorators` and `emitDecoratorMetadata` in `tsconfig.json`.
 3. Try the example above.
 
