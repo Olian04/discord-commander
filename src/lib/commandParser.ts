@@ -8,8 +8,8 @@ export const parseCommand = (args: {
 
   const result = patterns.reduce((res, pattern) => {
     const execAndStore = (regex: RegExp, matches: string[]) => {
-      exp.lastIndex = 0;
-      const regexResult = exp.exec(res.restOfMessage);
+      regex.lastIndex = 0;
+      const regexResult = regex.exec(res.restOfMessage);
       if (! regexResult) { return false; }
       const [fullMatch, ...groups] = regexResult;
 
@@ -24,12 +24,13 @@ export const parseCommand = (args: {
     if (exp.flags.toLowerCase().indexOf('g') > -1) {
       // g was provided as a flag, aka include all global matches
       while (execAndStore(exp, output)) { /* the body of the while is unnecessary */ }
+      res.matches.push(output);
     } else {
       // only include the first match found (this makes the regex authoring simpler for the user)
       execAndStore(exp, output);
+      res.matches.push(output[0]);
     }
 
-    res.matches.push(output);
     return res;
   }, {
     restOfMessage: args.msgToParse,
