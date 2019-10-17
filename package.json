@@ -1,5 +1,5 @@
 {
-  "name": "discordjs-commander",
+  "name": "discord-commander",
   "version": "0.1.0",
   "description": "A command manager for discord.js bots.",
   "main": "dist/api.js",
