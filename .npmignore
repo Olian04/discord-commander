@@ -1,0 +1,7 @@
+src/
+node_modules/
+.vscode/
+demo.ts
+secrets.json
+tsconfig
+tslint.json

@@ -1,37 +1,23 @@
 # discordjs-commander
+
 A command manager for discord.js bots.
 
 ```ts
-import { Client } from 'discord.js' 
-import { Commander, Command, option, subscribe } from 'discordjs-commander';
-import { HelpCommand, help } from 'discordjs-commander/commands/help';
+import { Client } from 'discord.js';
+import { Command, Commander, Event, parse, subscribe } from 'discordjs-commander';
 
-class EchoCommand extends Command('echo') {
-  @option('c') private capitalize = false;
-  @option() private debug = false;
-  @help() private helpText = 
-    'echo [options] phraseToEcho' +
-    'Echos the given phrase back to the user.' +
-    '  --capitalize -c | Capitalizes the echoed text. (default: false)' +
-    '  --debug         | Enables debug logging. (default: false)';
-  
-  
-  @subscribe('new', 'edit')
-  private onMessage(cmd) {
-    const {
-      options: { capitalize, debug },
-      argument,
-      author,
-      channel,
-      message,
-      event: { type: 'new' | 'edit', args }
-    } = cmd;
+class TestCommand extends Command('test') {
+  @parse.nextWord private subCommand: string;
+  @parse.remainingWords private arguments: string[];
+
+  @subscribe('new')
+  public onMessage(ctx: Event) {
+    ctx.message.reply(`${ctx.command} ${this.subCommand} [${this.arguments.join(', ')}]`);
   }
 }
 
 const commander = new Commander('!', [
-  EchoCommand,
-  HelpCommand,
+  TestCommand,
 ]);
 
 const client = new Client();
@@ -39,16 +25,7 @@ commander.start(client);
 client.login(discord_secret);
 ```
 
-```txt
-!help
-Syntax: !commandName [options] <optionalArgument> requiredArgument
-  echo [options] phraseToEcho
-    Echos the given phrase back to the user.
-    --capitalize -c | Capitalizes the echoed text. (default: false)
-    --debug         | Enables debug logging. (default: false)
-  help
-    Shows this page.
-```
+![demo img](./assets/demo.png)
 
 ## Install
 

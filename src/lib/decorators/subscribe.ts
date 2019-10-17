@@ -1,15 +1,17 @@
 import { ICommandInstance } from '../command';
 import { Event } from '../event';
-import { updateMetadata } from '../metadata.utils';
+import { metadata } from '../util/metadata';
+import { EventType } from '../interfaces/metadata';
 
-export const subscribe = <Target extends ICommandInstance>(...events: string[]) => <T extends (event: Event) => void>(
+export const subscribe = <Target extends ICommandInstance>(...events: EventType[]) => 
+  <T extends (event: Event) => void>(
     target: Target, propertyKey: string, propertyDescriptor: TypedPropertyDescriptor<T>,
   ): TypedPropertyDescriptor<T> => {
     if (typeof propertyKey !== 'string') {
       throw new Error(`Commander: Event subscribers can only be defined by string keys.`);
     }
 
-    updateMetadata(target, (allMetadata) => {
+    metadata.update(target, (allMetadata) => {
       events.forEach((eventName) => {
         if (! (eventName in allMetadata.subscribers)) {
           allMetadata.subscribers[eventName] = [];
