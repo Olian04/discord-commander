@@ -13,8 +13,8 @@ const parseFunction = (regex: RegExp) => (target: object, key: string) => {
   });
   Object.defineProperty(target, key, {
     get: () => value,
-    set: () => {
-      throw new Error(`Commander: Unable to set property "${key}" since its a calculated value.`);
+    set: (newValue) => {
+      value = newValue;
     },
     enumerable: true,
   });
