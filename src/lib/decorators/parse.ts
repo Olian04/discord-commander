@@ -23,9 +23,9 @@ const parseFunction = (regex: RegExp) => (target: object, key: string) => {
 export const parse = callableObject(parseFunction, {
   nextWord: parseFunction(/\s([a-z][a-z0-9]*)/i),
   remainingWords: parseFunction(/\s([a-z][a-z0-9]*)/ig),
-  nextChar: parseFunction(/([a-z])/i),
-  remainingChars: parseFunction(/([a-z])/ig),
+  nextChar: parseFunction(/(\S)/i),
+  remainingChars: parseFunction(/(\S)/ig),
   nextNumber: parseFunction(/([0-9]+(?:\.[0-9]+)?)/i),
   remainingNumbers: parseFunction(/([0-9]+(?:\.[0-9]+)?)/ig),
-  rest: parseFunction(/.*/i),
+  remaining: parseFunction(/.*/i),
 });
