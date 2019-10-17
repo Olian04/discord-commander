@@ -26,9 +26,19 @@ class PingCommand extends Command('ping') {
   }
 }
 
+class EchoCommand extends Command('echo') {
+  @parse.remaining private toEcho: string;
+
+  @subscribe('new')
+  public onMessage(ctx: Event) {
+    ctx.message.reply(this.toEcho);
+  }
+}
+
 const commander = new Commander('$', [
   TestCommand,
   PingCommand,
+  EchoCommand,
 ]);
 commander.deleteProcessedCommands = true;
 
