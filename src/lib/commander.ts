@@ -8,8 +8,8 @@ import { escapeRegex } from './util/regex';
 
 export class Commander {
   public allowBots = false;
-  public deleteUnknownCommands = true;
-  public deleteProcessedCommands = true;
+  public deleteUnknownCommands = false;
+  public deleteProcessedCommands = false;
 
   private registeredCommands = new Map<string, ICommandInstance>();
   constructor(private prefix: string, commands: ICommandStatic[]) {
@@ -43,13 +43,12 @@ export class Commander {
       }
 
       const argumentString = message.content.substring(commandMatch[0].length);
-      this.registeredCommands.forEach((comm) => {
-        // No need to do any work for commands that aren't subscribed to the event.
-        if (metadata.get(comm, 'subscribers')[eventName].length === 0) { return; }
+      const comm = this.registeredCommands.get(commandMatch[1]);
 
+      if (metadata.get(comm, 'subscribers')[eventName].length > 0) {
         applyArguments(comm, argumentString);
-        callAllListeners(comm, eventName, message);
-      });
+        await callAllListeners(comm, eventName, message);
+      }
 
       if (this.deleteProcessedCommands && message.deletable) {
         try {
@@ -60,10 +59,10 @@ export class Commander {
       }
     };
 
-    const callAllListeners = (comm: ICommandInstance, eventName: EventType, message: Message) => {
+    const callAllListeners = async (comm: ICommandInstance, eventName: EventType, message: Message) => {
       const meta = metadata.get(comm);
 
-      meta.subscribers[eventName].forEach((propertyName) => {
+      return Promise.all(meta.subscribers[eventName].map(async (propertyName) => {
         // Construct event
         const event = new Event({
           message,
@@ -75,8 +74,9 @@ export class Commander {
             time: new Date(),
           },
         });
-        comm[propertyName](event);
-      });
+        // This allows the event handler to both be synchronous and asynchronous on the user end
+        return Promise.resolve(comm[propertyName](event));
+      }));
     };
 
     const applyArguments = async (comm: ICommandInstance, argumentString: string) => {
