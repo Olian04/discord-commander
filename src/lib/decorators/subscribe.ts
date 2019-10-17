@@ -1,9 +1,9 @@
 import { ICommandInstance } from '../command';
 import { Event } from '../event';
-import { metadata } from '../util/metadata';
 import { EventType } from '../interfaces/metadata';
+import { metadata } from '../util/metadata';
 
-export const subscribe = <Target extends ICommandInstance>(...events: EventType[]) => 
+export const subscribe = <Target extends ICommandInstance>(...events: EventType[]) =>
   <T extends (event: Event) => void>(
     target: Target, propertyKey: string, propertyDescriptor: TypedPropertyDescriptor<T>,
   ): TypedPropertyDescriptor<T> => {
