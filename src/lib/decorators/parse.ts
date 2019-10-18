@@ -1,4 +1,4 @@
-import { callableObject } from '../util/callableObject';
+import { callableObject } from 'ts-callable-object';
 import { metadata } from '../util/metadata';
 
 const parseFunction = (regex: RegExp) => (target: object, key: string) => {
