@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/Olian04/discordjs-commander#readme",
   "dependencies": {
-    "@types/node": "^12.11.1",
+    "@types/node": "^12.11.7",
     "@types/reflect-metadata": "^0.1.0",
     "@types/typescript": "^2.0.0",
     "discord.js": "^11.5.1",
