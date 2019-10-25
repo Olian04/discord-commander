@@ -21,8 +21,23 @@ const commander = new Commander('!', [
 ]);
 
 const client = new Client();
-commander.start(client);
+
+// Either let commander setup its own simple event listeners
+commander.simpleSetup(client);
+
+// or delegate messages to commander manually
+client.on('message', (message) => {
+  commander.handleMessage('new', message);
+});
+client.on('messageUpdate', (message) => {
+  commander.handleMessage('edit', message);
+});
+
 client.login(discord_secret);
+```
+
+```txt
+!test someSubCommand argumentOne argumentTwo
 ```
 
 ![demo img](./assets/demo.png)

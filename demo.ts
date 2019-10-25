@@ -44,7 +44,13 @@ const commander = new Commander('$', [
 commander.deleteProcessedCommands = true;
 
 const client = new Client();
-commander.start(client);
+
+client.on('message', async (message) => {
+  commander.handleMessage('new', message);
+});
+client.on('messageUpdate', (message) => {
+  commander.handleMessage('edit', message);
+});
 
 const logLevel = process.argv[2] as LogLevels;
 if (new Set(['verbose', 'info', 'silent', 'warning', 'debug']).has(logLevel)) {
