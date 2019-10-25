@@ -1,7 +1,15 @@
 import { callableObject } from 'ts-callable-object';
+import { debugPrintObject } from '../util/debugPrintObject';
+import { logger } from '../util/logging';
 import { metadata } from '../util/metadata';
 
 const parseFunction = (regex: RegExp) => (target: object, key: string) => {
+  logger.debug(debugPrintObject('Parse', {
+    commandName: metadata.get(target, 'name'),
+    regex,
+    propertyKey: key,
+  }));
+
   let value: string | string[] = null;
   metadata.update(target, (meta) => {
     meta.argumentParsers.push({

@@ -3,6 +3,7 @@ import { ICommandInstance, ICommandStatic } from './command';
 import { parseCommand } from './commandParser';
 import { Event } from './event';
 import { EventType } from './interfaces/metadata';
+import { logger, LogLevels } from './util/logging';
 import { metadata } from './util/metadata';
 import { escapeRegex } from './util/regex';
 
@@ -10,16 +11,31 @@ export class Commander {
   public allowBots = false;
   public deleteUnknownCommands = false;
   public deleteProcessedCommands = false;
+  public set logLevel(newLogLevel: LogLevels) {
+    logger.logLevel =  newLogLevel;
+  }
 
   private registeredCommands = new Map<string, ICommandInstance>();
   constructor(private prefix: string, commands: ICommandStatic[]) {
+    logger.info(`Initiating command registration.`);
+
+    let commandsSkipped = 0;
     commands.forEach((Comm) => {
+      if (this.registeredCommands.has(Comm.commandName)) {
+        logger.warn(`Skipping command registration for command "${Comm.commandName}",  a command with that name already exists.`);
+        commandsSkipped += 1;
+        return;
+      }
       this.registeredCommands.set(Comm.commandName, new Comm());
+      logger.log(`Registered command "${Comm.commandName}"`);
     });
+    logger.info(`Command registration concluded with ${commandsSkipped} warning(s).`);
   }
 
   public start(client: Client) {
+    logger.info(`Initiating starting sequence.`);
     this.setupEventHandlers(client);
+    logger.info(`Starting sequence concluded.`);
   }
 
   private setupEventHandlers(client: Client) {
@@ -63,6 +79,8 @@ export class Commander {
       const meta = metadata.get(comm);
 
       return Promise.all(meta.subscribers[eventName].map(async (propertyName) => {
+        logger.debug(`Firing event "${eventName}" on command "${meta.name}"`);
+
         // Construct event
         const event = new Event({
           message,

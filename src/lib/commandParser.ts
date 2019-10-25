@@ -1,9 +1,11 @@
 import { IArgumentParser } from './interfaces/argumentParser';
+import { logger } from './util/logging';
 
 export const parseCommand = (args: {
   msgToParse: string,
   argumentParsers: IArgumentParser[],
 }): { msgRest: string, matches: Array<string | string[]> } => {
+  logger.debug(`Parsing command:`, args);
   const patterns = args.argumentParsers.map((argParser) => argParser.regex);
 
   const result = patterns.reduce((res, pattern) => {

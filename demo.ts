@@ -1,5 +1,6 @@
 import { Client } from 'discord.js';
 import { Command, Commander, Event, parse, subscribe } from './src/api';
+import { LogLevels, LogTypes } from './src/lib/util/logging';
 
 /* tslint:disable:max-classes-per-file */
 
@@ -44,6 +45,11 @@ commander.deleteProcessedCommands = true;
 
 const client = new Client();
 commander.start(client);
+
+const logLevel = process.argv[2] as LogLevels;
+if (new Set(['verbose', 'info', 'silent', 'warning', 'debug']).has(logLevel)) {
+  commander.logLevel = logLevel;
+}
 
 //  tslint:disable-next-line:no-var-requires
 const { discord_secret } = require('./secrets.json');
