@@ -36,20 +36,42 @@ class EchoCommand extends Command('echo') {
   }
 }
 
+const commandRules = {
+  [EchoCommand.commandName]: {
+    noEmptyArgs: true,
+  },
+};
+
 const commander = new Commander('$', [
   TestCommand,
   PingCommand,
   EchoCommand,
 ]);
+commander.logLevel = 'debug';
 commander.deleteProcessedCommands = true;
 
 const client = new Client();
 
 client.on('message', async (message) => {
+  if (message.author.bot) { return; }
+  if (! commander.isKnownCommand(message)) {
+    console.log(`Demo: Found unknown command "${message.content}"`);
+    return;
+  }
+
+  const [commandName, argumentString] = commander.parseCommand(message);
+  if (commandName.toLowerCase() in commandRules)  {
+    const rules = commandRules[commandName];
+    console.log(`Demo: Found rules for command "${commandName}":`, rules);
+    if (argumentString.trim().length === 0) {
+      if (rules.noEmptyArgs) {
+        console.log(`Demo: Command "${commandName}" requires an argument.`);
+        return;
+      }
+    }
+  }
+  console.log(`Demo: Handling command "${commandName} ${argumentString}"`);
   commander.handleMessage('new', message);
-});
-client.on('messageUpdate', (message) => {
-  commander.handleMessage('edit', message);
 });
 
 const logLevel = process.argv[2] as LogLevels;

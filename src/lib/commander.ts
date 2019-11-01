@@ -4,6 +4,7 @@ import { parseCommand } from './commandParser';
 import { Event } from './event';
 import { MessageHandlerResponse } from './interfaces/messageHandlerResponse';
 import { EventType } from './interfaces/metadata';
+import { debugPrintObject } from './util/debugPrintObject';
 import { logger, LogLevels } from './util/logging';
 import { metadata } from './util/metadata';
 import { escapeRegex } from './util/regex';
@@ -38,10 +39,43 @@ export class Commander {
     this.setupEventHandlers(client);
     logger.info(`Simple setup completed.`);
   }
+/**
+ *
+ * @memberof Commander
+ * @returns True if the message starts with the correct prefix followed by a known command name.
+ */
+  public isKnownCommand(message: Message): boolean {
+    // Exclude messages not containing valid commands
+    const [commandName] = this.parseCommand(message);
+    return commandName !== null;
+  }
+
+/**
+ *
+ * @memberof Commander
+ * @returns An array with two elements
+ *  - the first is the command name if the message contains a known command. Otherwise its null.
+ *  - the second is the args string if there is one. Otherwise its null.
+ */
+  public parseCommand(message: Message): [string | null, string | null] {
+    const commandRegex = new RegExp(`^${escapeRegex(this.prefix)}(${
+      [...this.registeredCommands.keys()].map(escapeRegex).join('|')
+    })((?:\\s|\\S)*)$`);
+    const maybeMatch = message.content.match(commandRegex);
+
+    logger.debug(debugPrintObject('Commander.parseCommand', {
+      input: message.content,
+      regex: commandRegex.source,
+      match: maybeMatch,
+    }));
+
+    // Exclude messages not containing valid
+    return maybeMatch ? [maybeMatch[1], maybeMatch[2]] : [null, null];
+  }
 
   public async handleMessage(eventName: EventType, message: Message): Promise<MessageHandlerResponse> {
     // Exclude none commands
-    if (! message.content.startsWith(this.prefix)) {
+    if (! this.isKnownCommand(message)) {
       return {
         status: 'skip',
         reason: 'exclude none commands',
@@ -57,13 +91,10 @@ export class Commander {
       };
     }
 
-    const commandRegex = new RegExp(`^${escapeRegex(this.prefix)}(${
-      [...this.registeredCommands.keys()].map(escapeRegex).join('|')
-    })`);
-    const commandMatch = message.content.match(commandRegex);
+    const [commandName, argumentString] = this.parseCommand(message);
 
     // Exclude messages not containing valid commands
-    if (!commandMatch) {
+    if (!commandName) {
       const shouldAttemptDelete = this.deleteUnknownCommands && message.deletable;
       if (shouldAttemptDelete) {
         await message.delete();
@@ -75,8 +106,7 @@ export class Commander {
       };
     }
 
-    const argumentString = message.content.substring(commandMatch[0].length);
-    const comm = this.registeredCommands.get(commandMatch[1]);
+    const comm = this.registeredCommands.get(commandName);
 
     if (metadata.get(comm, 'subscribers')[eventName].length > 0) {
       this.applyArguments(comm, argumentString);
@@ -91,13 +121,13 @@ export class Commander {
       }
       return {
         status: 'ok',
-        command:  commandMatch[0],
+        command: message.content,
         deleted: true,
       };
     } else {
       return {
         status: 'ok',
-        command:  commandMatch[0],
+        command: message.content,
         deleted: false,
       };
     }

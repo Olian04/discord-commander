@@ -26,10 +26,19 @@ const client = new Client();
 commander.simpleSetup(client);
 
 // or delegate messages to commander manually
+const isInvalid = (message) => message.author.bot || !commander.isKnownCommand(message);
+const logCommand = (message) => {
+  const [commandName, argumentString] = commander.parseCommand(message);
+  console.log(`Command(name="${commandName}", args="${argumentString}")`);
+}
 client.on('message', (message) => {
+  if (isInvalid(message)) { return; }
+  logCommand(message);
   commander.handleMessage('new', message);
 });
 client.on('messageUpdate', (message) => {
+  if (isInvalid(message)) { return; }
+  logCommand(message);
   commander.handleMessage('edit', message);
 });
 
