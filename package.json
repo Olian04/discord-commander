@@ -1,6 +1,6 @@
 {
   "name": "discord-commander",
-  "version": "0.6.1",
+  "version": "1.0.1",
   "description": "A command manager for discord.js bots.",
   "main": "dist/api.js",
   "scripts": {
@@ -19,15 +19,18 @@
   },
   "homepage": "https://github.com/Olian04/discordjs-commander#readme",
   "dependencies": {
-    "@types/node": "^12.11.7",
+    "@olian/typescript-helpers": "^2.2.1",
+    "@types/node": "^13.13.5",
     "@types/reflect-metadata": "^0.1.0",
-    "@types/typescript": "^2.0.0",
-    "discord.js": "^11.5.1",
+    "discord.js": "^12.2.0",
     "reflect-metadata": "^0.1.13",
     "ts-callable-object": "^1.0.1",
-    "ts-metadata-handler": "^1.1.0",
-    "ts-node": "^8.4.1",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.4"
+    "ts-metadata-handler": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/typescript": "^2.0.0",
+    "ts-node": "^8.10.1",
+    "tslint": "^6.1.2",
+    "typescript": "^3.8.3"
   }
 }

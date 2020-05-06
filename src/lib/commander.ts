@@ -175,6 +175,6 @@ export class Commander {
 
   private setupEventHandlers(client: Client) {
     client.on('message', async (message) => this.handleMessage('new', message));
-    client.on('messageUpdate', async (_, newMessage) => this.handleMessage('edit', newMessage));
+    client.on('messageUpdate', async (_, newMessage) => this.handleMessage('edit', newMessage as Message));
   }
 }

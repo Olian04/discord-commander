@@ -1,8 +1,8 @@
-import { DMChannel, GroupDMChannel, Message, TextChannel, User } from 'discord.js';
+import { DMChannel, NewsChannel, Message, TextChannel, User } from 'discord.js';
 import { EventType } from './interfaces/metadata';
 import { debugPrintObject } from './util/debugPrintObject';
 import { logger } from './util/logging';
-import { Record } from './util/record';
+import { Record } from '@olian/typescript-helpers';
 
 export class Event extends Record<Event> {
   public command: string;
@@ -11,7 +11,7 @@ export class Event extends Record<Event> {
     time: Date;
   };
   public author: User;
-  public channel: TextChannel | DMChannel | GroupDMChannel;
+  public channel: TextChannel | DMChannel | NewsChannel;
   public message: Message;
 
   constructor(e: Event) {
